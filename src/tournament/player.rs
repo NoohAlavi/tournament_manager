@@ -1,7 +1,7 @@
 pub struct Player {
     pub name: String,
     pub score: f32,
-    pub last_paired_player_name: String,
+    pub last_paired_opponent_name: String,
     pub is_bye: bool
 }
 
@@ -10,7 +10,7 @@ impl Player {
         Player {
             name,
             score: 0.0,
-            last_paired_player_name: String::new(),
+            last_paired_opponent_name: String::new(),
             is_bye: false
         }
     }
