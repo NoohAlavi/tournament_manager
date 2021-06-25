@@ -1,3 +1,4 @@
+mod player;
 use std::{
     collections::HashMap,
     fs, 
