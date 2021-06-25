@@ -16,7 +16,7 @@ pub struct Tournament {
 
 impl Tournament {
     pub fn new(tourney_name: &str, num_of_rounds: u8) -> Tournament {
-        println!("Tournament '{}' has been created!", tourney_name);
+        // println!("Tournament '{}' has been created!", tourney_name);
         Tournament {
             name: tourney_name.to_string(),
             players: Vec::new(),
@@ -34,8 +34,14 @@ impl Tournament {
 
     pub fn start_round(&mut self, round_num: u8) {
         cls();
+        println!(
+            "{}\n",
+            &self.name.to_string()
+                .bold()
+                .cyan()
+        );
         println!("{}",
-            &format!("Current Round: {}/{}\n\n", round_num, self.rounds).blue()
+            &format!("Current Round: {}/{}\n\n", round_num, self.rounds).blue().bold()
         );
         self.print_standings();
         self.print_pairings();
@@ -48,7 +54,7 @@ impl Tournament {
             println!(
                 "{}",
                 &format!("How many points did {} score this round?", 
-                player.name).green()
+                player.name).green().bold()
             );
             io::stdin()
                 .read_line(&mut new_score)
@@ -68,15 +74,17 @@ impl Tournament {
     }
 
     pub fn get_pairings(&self) -> String {
-        String::from("<pairings (work in progress)>\n")
+        let mut pairings = String::from("Pairings For This Round:\n");
+        pairings.push_str("<Currently Work In Progress>");
+        pairings
     }
 
     pub fn print_pairings(&self) {
-        println!("{}", self.get_pairings().cyan());
+        println!("{}", self.get_pairings().cyan().bold());
     }
 
     pub fn get_standings(&self) -> String {
-        let mut standings = format!("{} scores:\n\n", self.name);
+        let mut standings = r#"Scores:"#.to_string();
         
         for player in &self.players {
             let score_str = format!("{}: {}", player.name, player.score);
@@ -88,12 +96,13 @@ impl Tournament {
     }
 
     pub fn print_standings(&self) {
-        println!("{}", self.get_standings().yellow())
+        println!("{}", self.get_standings().yellow().bold())
     }
 
     pub fn save_standings(&self) -> io::Result<()> {
         let file_name = format!("{}_scores.txt", self.name);
         let mut file = fs::File::create(file_name)?;
+        file.write_all(format!("{}\n", self.name).as_bytes())?;
         file.write_all(self.get_standings().as_bytes())?;
 
         Ok(())
