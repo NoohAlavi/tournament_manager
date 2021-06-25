@@ -1,6 +1,5 @@
 mod player;
 use std::{
-    collections::HashMap,
     fs, 
     io::{
         self, 
@@ -11,7 +10,7 @@ use colored::*;
 
 pub struct Tournament {
     pub name: String,
-    pub players: HashMap<String, f32>,
+    pub players: Vec<player::Player>,
     pub rounds: u8
 }
 
@@ -20,13 +19,13 @@ impl Tournament {
         println!("Tournament '{}' has been created!", tourney_name);
         Tournament {
             name: tourney_name.to_string(),
-            players: HashMap::new(),
+            players: Vec::new(),
             rounds: num_of_rounds
         }
     }
 
     pub fn register_player(&mut self, player_name: &str) {
-        self.players.insert(player_name.to_string(), 0.0);
+        self.players.push(player::Player::new(player_name.to_string()));
         println!(
             "{}",
             format!("{} has been added to {}!", player_name, self.name).yellow()
@@ -43,14 +42,13 @@ impl Tournament {
 
         let mut new_score: String;
         
-        for player in self.players.clone() {
+        for player in &mut self.players {
             new_score = String::new();
-            let player_name = player.0;
 
             println!(
                 "{}",
                 &format!("How many points did {} score this round?", 
-                player_name).green()
+                player.name).green()
             );
             io::stdin()
                 .read_line(&mut new_score)
@@ -59,7 +57,7 @@ impl Tournament {
                 .parse()
                 .unwrap_or_else(|_| panic!("{}", "[ERROR] Please enter a valid number.".red()));
 
-            *self.players.entry(player_name).or_insert(0.0) += new_score;
+            player.update_score(new_score);
         }
 
         if round_num < self.rounds {
@@ -80,10 +78,8 @@ impl Tournament {
     pub fn get_standings(&self) -> String {
         let mut standings = format!("{} scores:\n\n", self.name);
         
-        for player in self.players.clone() {
-            let player_name = player.0;
-            let player_score = player.1;
-            let score_str = format!("{}: {}", player_name, player_score);
+        for player in &self.players {
+            let score_str = format!("{}: {}", player.name, player.score);
             
             standings.push_str(&score_str);
             standings.push('\n');

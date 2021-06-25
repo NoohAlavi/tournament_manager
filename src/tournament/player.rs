@@ -1,8 +1,8 @@
 pub struct Player {
-    name: String,
-    score: f32,
-    last_paired_player_name: String,
-    is_bye: bool
+    pub name: String,
+    pub score: f32,
+    pub last_paired_player_name: String,
+    pub is_bye: bool
 }
 
 impl Player {
